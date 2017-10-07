@@ -1,0 +1,26 @@
+.flex-1 {
+  flex: 1;
+}
+.flex-basic {
+  display: flex;
+  height: 100%;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-row {
+  flex-direction: row;
+}
+body {
+  background-color: #385F71;
+}
+body, html {
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  padding: 0;
+  width: 100%;
+}
+div {
+  border: 1px none red;
+}
