@@ -27,7 +27,7 @@ var phaser_main = function () {
   var loop_text;
 
   var walk_animation_complete = function () {
-    this.add.text(
+    var text = this.add.text(
       32,
       96,
       STRING.ANIMATION_COMPLETE,

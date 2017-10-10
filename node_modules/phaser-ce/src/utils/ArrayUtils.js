@@ -71,6 +71,40 @@ Phaser.ArrayUtils = {
     },
 
     /**
+    * Remove one or more items at the given index and reorder the array.
+    *
+    * The new array length will be `array.length - count`.
+    *
+    * This is an alternative to `array.splice(startIndex, count)`.
+    *
+    * @see https://github.com/mreinstein/remove-array-items
+    * @see https://gamealchemist.wordpress.com/2013/05/01/lets-get-those-javascript-arrays-to-work-fast/
+    *
+    * @method Phaser.ArrayUtils.remove
+    * @param {any[]} array
+    * @param {integer} startIndex
+    * @param {integer} [count=1]
+    * @return {any[]} The modified array.
+    */
+    remove: function (array, startIndex, count)
+    {
+        var length = array.length;
+
+        if (startIndex >= length || count === 0) { return; }
+
+        if (count == null) { count = 1; }
+
+        var newLength = length - count;
+
+        for (var i = startIndex; i < newLength; ++i)
+        {
+            array[i] = array[i + count];
+        }
+
+        array.length = newLength;
+    },
+
+    /**
     * A standard Fisher-Yates Array shuffle implementation which modifies the array in place.
     *
     * @method Phaser.ArrayUtils.shuffle
@@ -260,15 +294,31 @@ Phaser.ArrayUtils = {
     },
 
     /**
-    * Create an array representing the inclusive range of numbers (usually integers) in `[start, end]`.
+    * Create an array representing the inclusive range of numbers (usually integers) in `[start, end]` (or `[0, start]`, if `end` is omitted).
     * This is equivalent to `numberArrayStep(start, 1 + end, 1)`.
+    *
+    * When exactly one argument is passed, it's used as `end` and 0 is used as `start`. The length of the result is (1 + end).
+    *
+    * ##### Examples
+    *
+    * ```javascript
+    * numberArray(3);    // -> [0, 1, 2, 3]
+    * numberArray(0, 3); // -> [0, 1, 2, 3]
+    * numberArray(1, 3); // -> [1, 2, 3]
+    * ```
     *
     * @method Phaser.ArrayUtils.numberArray
     * @param {number} start - The minimum value the array starts with.
-    * @param {number} end - The maximum value the array contains.
+    * @param {number} [end] - The maximum value the array contains.
     * @return {number[]} The array of number values.
     */
     numberArray: function (start, end) {
+
+        if (end === undefined || end === null)
+        {
+            end = start;
+            start = 0;
+        }
 
         var result = [];
 
