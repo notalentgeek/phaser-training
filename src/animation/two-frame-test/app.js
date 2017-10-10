@@ -1,11 +1,27 @@
 var phaser_main = function () {
-  var ASSET_STRING = Object.freeze({});
-  
-  var FILE_NAME = Object.freeze({});
-  
+  var ANIMATION = Object.freeze({
+    DOWN:"down",
+    LEFT:"left",
+    RIGHT:"right",
+    UP:"up"
+  });
+
+  var ASSET_STRING = Object.freeze({
+    SPACEMAN_CHARACTER:"spaceman_character"
+  });
+
+  var FILE_NAME = Object.freeze({
+    SPACEMAN_CHARACTER:"/spaceman_character.png"
+  });
+
   var PATH = Object.freeze({
     ASSETS: "./assets"
   });
+
+  var cursor;
+  var left_animation;
+  var right_animation;
+  var spaceman_character;
 
   this.game = new Phaser.Game(
     800,
@@ -13,8 +29,62 @@ var phaser_main = function () {
     Phaser.AUTO,
     "phaser",
     {
-      create:function () {},
-      preload:function () {}
+      create:function () {
+        this.game.stage.setBackgroundColor("#FF00FF");
+
+        spaceman_character = this.game.add.sprite(0, 0,
+          ASSET_STRING.SPACEMAN_CHARACTER, 1);
+        spaceman_character.scale.set(4);
+        spaceman_character.anchor.setTo(0.5, 0.5);
+        spaceman_character.x = this.game.world.centerX;
+        spaceman_character.y = this.game.world.centerY;
+        spaceman_character.smoothed = false;
+
+        // Set the movement animations.
+        left_animation = spaceman_character.animations.add(ANIMATION.LEFT,
+          [8, 9], 10, true);
+        right_animation = spaceman_character.animations.add(ANIMATION.RIGHT,
+          [1, 2], 10, true);
+        spaceman_character.animations.add(ANIMATION.DOWN, [4, 5, 6], 10, true);
+        spaceman_character.animations.add(ANIMATION.UP, [11, 12, 13], 10,
+          true);
+
+        // Enable the game physics engine.
+        this.game.physics.enable(spaceman_character, Phaser.Physics.ARCADE);
+
+        // Create control cursor.
+        cursor = this.game.input.keyboard.createCursorKeys();
+      },
+      preload:function () {
+        this.game.load.spritesheet(
+          ASSET_STRING.SPACEMAN_CHARACTER,
+          PATH.ASSETS + FILE_NAME.SPACEMAN_CHARACTER,
+          16, 16
+        );
+      },
+      render:function () {
+        this.game.debug.text(spaceman_character.frame, 32, 32);
+      },
+      update:function () {
+        spaceman_character.body.velocity.set(0);
+
+        if (cursor.down.isDown) {
+          spaceman_character.body.velocity.y = 100;
+          spaceman_character.play(ANIMATION.DOWN);
+        }
+        else if (cursor.left.isDown) {
+          spaceman_character.body.velocity.x = -100;
+          spaceman_character.play(ANIMATION.LEFT);
+        }
+        else if (cursor.right.isDown) {
+          spaceman_character.body.velocity.x = 100;
+          spaceman_character.play(ANIMATION.RIGHT);
+        }
+        else if (cursor.up.isDown) {
+          spaceman_character.body.velocity.y = -100;
+          spaceman_character.play(ANIMATION.UP);
+        }
+      }
     }
   );
 };
@@ -22,76 +92,4 @@ phaser_main = new anyton(phaser_main, []);
 
 window.onload = function () {
   var app = phaser_main.create_instance();
-}
-
-
-
-
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
-
-function preload() {
-
-    game.load.spritesheet('player', 'assets/sprites/spaceman.png', 16, 16);
-
-}
-
-var cursors;
-var player;
-var left;
-var right;
-
-function create() {
-
-    game.stage.backgroundColor = '#ff00ff';
-
-    player = game.add.sprite(48, 48, 'player', 1);
-    player.smoothed = false;
-    player.scale.set(4);
-
-    left = player.animations.add('left', [8,9], 10, true);
-    right = player.animations.add('right', [1,2], 10, true);
-    player.animations.add('up', [11,12,13], 10, true);
-    player.animations.add('down', [4,5,6], 10, true);
-
-    game.physics.enable(player, Phaser.Physics.ARCADE);
-
-    cursors = game.input.keyboard.createCursorKeys();
-
-}
-
-function update() {
-
-    player.body.velocity.set(0);
-
-    if (cursors.left.isDown)
-    {
-        player.body.velocity.x = -100;
-        player.play('left');
-    }
-    else if (cursors.right.isDown)
-    {
-        player.body.velocity.x = 100;
-        player.play('right');
-    }
-    else if (cursors.up.isDown)
-    {
-        player.body.velocity.y = -100;
-        player.play('up');
-    }
-    else if (cursors.down.isDown)
-    {
-        player.body.velocity.y = 100;
-        player.play('down');
-    }
-    else
-    {
-        player.animations.stop();
-    }
-
-}
-
-function render() {
-
-    game.debug.text(player.frame, 32, 32);
-
 }

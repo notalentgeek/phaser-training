@@ -1,8 +1,16 @@
 var phaser_main = function () {
-  var ASSET_STRING = Object.freeze({});
-  
-  var FILE_NAME = Object.freeze({});
-  
+  var ANIMATION = Object.freeze({
+    WALK:"walk"
+  });
+
+  var ASSET_STRING = Object.freeze({
+    MUMMY_CHARACTER:"mummy_character"
+  });
+
+  var FILE_NAME = Object.freeze({
+    MUMMY_CHARACTER:"/mummy_character.png"
+  });
+
   var PATH = Object.freeze({
     ASSETS: "./assets"
   });
@@ -13,8 +21,25 @@ var phaser_main = function () {
     Phaser.AUTO,
     "phaser",
     {
-      create:function () {},
-      preload:function () {}
+      create:function () {
+        var mummy_character = this.game.add.sprite(0, 0,
+          ASSET_STRING.MUMMY_CHARACTER);
+        mummy_character.anchor.setTo(0.5, 0.5);
+        mummy_character.smoothed = false;
+        mummy_character.x = this.game.world.centerX;
+        mummy_character.y = this.game.world.centerY;
+        var mummy_walk_animation = mummy_character.animations.add(
+          ANIMATION.WALK
+        );
+        mummy_character.animations.play(ANIMATION.WALK, 30, true);
+      },
+      preload:function () {
+        this.game.load.spritesheet(
+          ASSET_STRING.MUMMY_CHARACTER,
+          PATH.ASSETS + FILE_NAME.MUMMY_CHARACTER,
+          37, 45, 18
+        );
+      }
     }
   );
 };
@@ -22,35 +47,4 @@ phaser_main = new anyton(phaser_main, []);
 
 window.onload = function () {
   var app = phaser_main.create_instance();
-}
-
-
-
-
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
-
-function preload() {
-
-    //  37x45 is the size of each frame
-
-    //  There are 18 frames in the PNG - you can leave this value blank if the frames fill up the entire PNG, but in this case there are some
-    //  blank frames at the end, so we tell the loader how many to load
-
-    game.load.spritesheet('mummy', 'assets/sprites/metalslug_mummy37x45.png', 37, 45, 18);
-
-}
-
-function create() {
-
-    var mummy = game.add.sprite(300, 200, 'mummy');
-
-    //  Here we add a new animation called 'walk'
-    //  Because we didn't give any other parameters it's going to make an animation from all available frames in the 'mummy' sprite sheet
-    var walk = mummy.animations.add('walk');
-
-    //  And this starts the animation playing by using its key ("walk")
-    //  30 is the frame rate (30fps)
-    //  true means it will loop when it finishes
-    mummy.animations.play('walk', 30, true);
-
 }
